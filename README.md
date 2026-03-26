@@ -1,7 +1,6 @@
 # 🌱 AgroSmart AI – Crop Recommendation System
 
-AgroSmart AI is a Machine Learning-based crop recommendation system that suggests the most suitable crops based on soil nutrients and environmental conditions. The system analyzes parameters such as Nitrogen (N), Phosphorus (P), Potassium (K), temperature, humidity, pH, and rainfall to provide accurate crop predictions.
-
+AgroSmart AI is an intelligent crop recommendation system that helps users identify the most suitable crops based on their surrounding environmental conditions. By simply entering the temperature of their location, along with other key factors like soil nutrients, humidity, pH, and rainfall, the system analyzes the data using a machine learning model to generate accurate crop suggestions. Designed to be simple and practical, it allows farmers and users to make better agricultural decisions without needing deep technical knowledge. The project focuses on real-world usability, making crop selection smarter, faster, and more efficient.
 ---
 
 ## Features
