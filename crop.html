@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommender</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: beige;
+            font-family: "Cinzel", serif;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #745A48;
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        p.quote {
+            color: #745A48;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .images {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .images img {
+            height: 200px;
+            width: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .search-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 12px;
+            font-size: 16px;
+            width: 300px;
+            border: 2px solid #745A48;
+            border-radius: 8px;
+            background: #fff8f0;
+            color: #745A48;
+            font-family: "Cinzel", serif;
+            text-align: center;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 16px;
+            background: #745A48;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: "Cinzel", serif;
+        }
+
+        button:hover { background: #5a4035; }
+
+        #error { color: red; text-align: center; margin-top: 10px; }
+
+        #results {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .crop-card {
+            background: #fff8f0;
+            border: 2px solid #745A48;
+            border-radius: 10px;
+            padding: 16px 24px;
+            font-size: 18px;
+            color: #745A48;
+            text-align: center;
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Turn Temperature into Smart Crop Decisions</h1>
+    <p class="quote">"Every grain you eat carries the story of hard work and hope."</p>
+
+    <div class="images">
+        <img src="Broccoli.webp" alt="broccoli">
+        <img src="crop.png" alt="crop">
+        <img src="fruits.jpg" alt="fruits">
+    </div>
+
+    <div class="search-box">
+        <input id="tempInput" type="number" placeholder="Enter temperature (°C)" />
+        <input id="topN" type="number" placeholder="How many crops? (e.g. 5)" />
+        <button onclick="getCrops()">Recommend Crops</button>
+    </div>
+
+    <p id="error"></p>
+    <div id="results"></div>
+
+    <script>
+        async function getCrops() {
+            const temp = parseFloat(document.getElementById("tempInput").value);
+            const topN = parseInt(document.getElementById("topN").value) || 5;
+            const errorEl = document.getElementById("error");
+            const resultsEl = document.getElementById("results");
+
+            errorEl.innerText = "";
+            resultsEl.innerHTML = "<p style='text-align:center;color:#745A48'>Loading...</p>";
+
+            if (isNaN(temp)) {
+                errorEl.innerText = "Please enter a valid temperature.";
+                resultsEl.innerHTML = "";
+                return;
+            }
+
+            const response = await fetch("http://localhost:5000/recommend", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ temperature: temp, top_n: topN })
+            });
+
+            if (!response.ok) {
+                errorEl.innerText = "Something went wrong. Try again.";
+                resultsEl.innerHTML = "";
+                return;
+            }
+
+            const data = await response.json();
+            resultsEl.innerHTML = data.crops
+                .map((c, i) => `<div class="crop-card">🌱 ${i + 1}. ${c}</div>`)
+                .join("");
+
+            resultsEl.scrollIntoView({ behavior: "smooth" });
+        }
+    </script>
+</body>
+</html>
